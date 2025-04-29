@@ -3,9 +3,8 @@
 mysql -u admin -p admin
 
 
-CREATE DATABASE tarefas_industria;
 
-USE tarefas_industria;
+
 
 CREATE TABLE usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,

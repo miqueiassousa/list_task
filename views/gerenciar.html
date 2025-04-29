@@ -1,0 +1,48 @@
+<h2>Gerenciamento de Tarefas</h2>
+<div style="display:flex; gap:30px">
+  <div><h3>A Fazer</h3><div id="afazer"></div></div>
+  <div><h3>Fazendo</h3><div id="fazendo"></div></div>
+  <div><h3>Pronto</h3><div id="pronto"></div></div>
+</div>
+
+<script>
+  function carregar() {
+    fetch('/tarefas/listar')
+      .then(res => res.json())
+      .then(tarefas => {
+        document.getElementById("afazer").innerHTML = '';
+        document.getElementById("fazendo").innerHTML = '';
+        document.getElementById("pronto").innerHTML = '';
+
+        tarefas.forEach(t => {
+          const div = document.createElement('div');
+          div.innerHTML = `
+            <p>${t.descricao} - ${t.Usuario.nome}</p>
+            <select onchange="mudarStatus(${t.id}, this.value)">
+              <option ${t.status === 'A fazer' ? 'selected' : ''}>A fazer</option>
+              <option ${t.status === 'Fazendo' ? 'selected' : ''}>Fazendo</option>
+              <option ${t.status === 'Pronto' ? 'selected' : ''}>Pronto</option>
+            </select>
+            <button onclick="excluir(${t.id})">Excluir</button>
+          `;
+          document.getElementById(t.status.toLowerCase().replace(' ', '')).appendChild(div);
+        });
+      });
+  }
+
+  function mudarStatus(id, status) {
+    fetch('/tarefas/status/' + id, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: 'status=' + encodeURIComponent(status)
+    }).then(carregar);
+  }
+
+  function excluir(id) {
+    if (confirm('Deseja excluir?')) {
+      fetch('/tarefas/excluir/' + id, { method: 'POST' }).then(carregar);
+    }
+  }
+
+  carregar();
+</script>

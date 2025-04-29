@@ -1,0 +1,26 @@
+<h2>Cadastro de Tarefa</h2>
+<form method="POST" action="/tarefas">
+  <select name="usuarioId" id="usuarios"></select>
+  <input type="text" name="setor" placeholder="Setor" required />
+  <textarea name="descricao" placeholder="Descrição" required></textarea>
+  <select name="prioridade">
+    <option>Baixa</option>
+    <option>Média</option>
+    <option>Alta</option>
+  </select>
+  <button type="submit">Cadastrar</button>
+</form>
+
+<script>
+  fetch('/usuarios/listar')
+    .then(res => res.json())
+    .then(users => {
+      const select = document.getElementById('usuarios');
+      users.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id;
+        opt.text = u.nome;
+        select.add(opt);
+      });
+    });
+</script>

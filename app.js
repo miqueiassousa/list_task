@@ -1,12 +1,15 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
+const express = require('express'); // Servidor
+const bodyParser = require('body-parser'); // Requisições de formulario
+const path = require('path'); // caminho de diretório
 const { Sequelize, DataTypes } = require('sequelize');
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 const sequelize = new Sequelize('miqueias_tarefas', 'root', 'admin', {
     host: 'localhost',
     dialect: 'mysql',
-    logging: false,
+    logging: false, // Bloqueia mensagens no console 
 });
 
 const Usuario = sequelize.define('Usuario', {
@@ -33,12 +36,6 @@ Tarefa.belongsTo(Usuario, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
 });
-
-sequelize.sync().then(() => console.log('Banco sincronizado'));
-
-const app = express();
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static('public'));
 
 app.get('/', (req, res) => res.redirect('/usuarios'));
 app.get('/usuarios', (req, res) => res.sendFile(path.join(__dirname, 'views/usuarios.html')));
@@ -90,4 +87,5 @@ app.post('/tarefas/excluir/:id', (req, res) => {
         .then(() => res.send('Tarefa excluída!'));
 });
 
+sequelize.sync().then(() => console.log('Banco sincronizado'));
 app.listen(3000, () => console.log('Servidor rodando em http://localhost:3000'));
